@@ -362,6 +362,11 @@ instance Costrong (->) where
   unfirst f a = b where (b, d) = f (a, d)
   unsecond f a = b where (d, b) = f (d, a)
 
+instance MonadFix m => Costrong (Star m) where
+  unfirst (Star f) = Star go
+    where
+      go a = fst <$> mfix (\(_, d) -> f (a, d))
+
 instance Functor f => Costrong (Costar f) where
   unfirst (Costar f) = Costar f'
     where f' fa = b where (b, d) = f ((\a -> (a, d)) <$> fa)
